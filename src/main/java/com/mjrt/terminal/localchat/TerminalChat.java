@@ -1,7 +1,5 @@
 package com.mjrt.terminal.localchat;
 
-import java.util.Scanner;
-
 public class TerminalChat {
     private Options options;
 

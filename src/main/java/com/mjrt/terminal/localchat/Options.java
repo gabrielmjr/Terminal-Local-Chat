@@ -1,40 +1,57 @@
 package com.mjrt.terminal.localchat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjrt.terminal.localchat.localclient.Client;
+import com.mjrt.terminal.localchat.localserver.Server;
+import lombok.Getter;
 
-import java.lang.invoke.StringConcatException;
 import java.util.Scanner;
 
 public class Options {
     private static Options instance;
-    private Client client;
+    private final Client client;
+    private final Server server;
+    @Getter
     private final Scanner scanner;
-    private String ipAddress;
+    @Getter
+    private final ObjectMapper objectMapper;
     private int port;
 
     private Options() {
         scanner = new Scanner(System.in);
+        client = Client.getInstance();
+        server = Server.getInstance();
+        objectMapper = new ObjectMapper();
     }
 
     public void process() {
-        client = Client.getInstance();
         printMessageL("To use the chat your devices must have wifi.");
         printMessageL("Type 1 to be the server (Turn on hotspot).");
         printMessageL("Type 2 to be the client (Turn on wifi).");
         System.out.print(">>> ");
         switch(readInt()) {
             case 1:
-                printMessageL("Enter the port to listen: ");
+                startAsServer();
                 break;
             case 2:
-                startAsServer();
+                startAsClient();
                 break;
         }
     }
 
     private void startAsServer() {
+        printMessage("Enter the port to listen: ");
+        port = readInt();
+        try {
+            server.createConnection(port);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void startAsClient() {
         printMessage("Enter the ip address: ");
-        ipAddress = readString();
+        String ipAddress = readString();
         printMessage("Enter the listened port: ");
         port = readInt();
         try {
@@ -58,10 +75,6 @@ public class Options {
 
     private int readInt() {
         return scanner.nextInt();
-    }
-
-    public Scanner getScanner() {
-        return scanner;
     }
 
     public static Options getInstance() {
