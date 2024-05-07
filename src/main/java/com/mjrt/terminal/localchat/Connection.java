@@ -13,7 +13,8 @@ public class Connection {
         return new Socket(ip, port);
     }
 
-    public static Socket createConnection(int port) throws IOException {
-        return new ServerSocket(port).accept();
+    @Contract("_ -> new")
+    public static @NotNull ServerSocket createConnection(int port) throws IOException {
+        return new ServerSocket(port);
     }
 }

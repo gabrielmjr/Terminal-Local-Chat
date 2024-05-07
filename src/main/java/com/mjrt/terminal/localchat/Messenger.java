@@ -3,11 +3,9 @@ package com.mjrt.terminal.localchat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjrt.terminal.localchat.model.Message;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Messenger {
@@ -21,34 +19,39 @@ public class Messenger {
     }
 
     protected void bindMessageObtainer() {
-        new Thread(() -> {
-            while (true) {
+            new Thread(() -> {
                 try {
-                    var message = obtainMessage();
-                    System.out.println(message.getFrom() + ": " + message.getMessage());
+                    while (true) {
+                        var message = obtainMessage();
+                        System.out.println(message.getFrom() + ": " + message.getMessage());
+                    }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println("Error: " + e.getMessage());
                 }
-            }
-        }).start();
+            }).start();
     }
 
     private Message obtainMessage() throws IOException {
-        StringBuilder lines = new StringBuilder();
-        String line;
-        InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        while ((line = bufferedReader.readLine()) != null)
-            lines.append(line);
-        return objectMapper.readValue(lines.toString(), Message.class);
+        var dataInputStream = new DataInputStream(socket.getInputStream());
+        return objectMapper.readValue(dataInputStream.readUTF(), Message.class);
     }
 
     protected void bindMessageSender() throws IOException {
         while (true) {
-            var message = scanner.nextLine();
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-            printWriter.println(message);
-            printWriter.flush();
+            try {
+                var messageLabel = scanner.nextLine();
+                var message = new Message(
+                        "My name",
+                        new Date(System.currentTimeMillis()),
+                        messageLabel
+                );
+                var dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                dataOutputStream.writeUTF(objectMapper.writeValueAsString(message));
+                dataOutputStream.flush();
+                socket.getOutputStream().flush();
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
         }
     }
 }

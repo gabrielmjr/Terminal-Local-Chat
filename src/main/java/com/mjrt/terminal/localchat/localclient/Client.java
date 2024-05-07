@@ -15,6 +15,7 @@ public class Client extends Messenger {
         socket = Connection.connectAsClient(ipAddress, port);
         printMessageL("Connected");
         bindMessageObtainer();
+        bindMessageSender();
     }
 
     public static Client getInstance() {

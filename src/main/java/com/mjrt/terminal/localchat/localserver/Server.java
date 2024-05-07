@@ -1,12 +1,7 @@
 package com.mjrt.terminal.localchat.localserver;
 
 import com.mjrt.terminal.localchat.Connection;
-import com.mjrt.terminal.localchat.Messenger;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.nio.file.Path;
+import com.mjrt.terminal.localchat.Messenger;import java.io.IOException;
 
 import static com.mjrt.terminal.localchat.Options.printMessageL;
 
@@ -17,9 +12,9 @@ public class Server extends Messenger {
 
     public void createConnection(int port) throws IOException {
         initializeAttributes();
-        socket = new ServerSocket(port).accept();
-        printMessageL("Serving in ip: " + socket.getInetAddress() + ", port: " + socket.getPort() + "\n");
-        socket = Connection.createConnection(port);
+        var serverSocket = Connection.createConnection(port);
+        printMessageL("Serving in ip: " + serverSocket.getInetAddress().getHostAddress() + ", port: " + port + "\n");
+        socket = serverSocket.accept();
         bindMessageObtainer();
         bindMessageSender();
     }
