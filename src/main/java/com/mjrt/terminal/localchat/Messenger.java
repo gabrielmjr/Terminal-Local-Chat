@@ -2,6 +2,8 @@ package com.mjrt.terminal.localchat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mjrt.terminal.localchat.model.Message;
+import com.mjrt.terminal.localchat.util.DateFormatter;
+import lombok.Setter;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,6 +14,8 @@ public class Messenger {
     protected Socket socket;
     protected ObjectMapper objectMapper;
     protected Scanner scanner;
+    @Setter
+    protected String thisUsersNickname;
 
     protected void initializeAttributes() {
         scanner = Options.getInstance().getScanner();
@@ -23,7 +27,7 @@ public class Messenger {
                 try {
                     while (true) {
                         var message = obtainMessage();
-                        System.out.println(message.getFrom() + ": " + message.getMessage());
+                        System.out.printf("%s[%s]: %s%n", message.getFrom(), DateFormatter.fullFormat(message.getSentDate()), message.getMessage());
                     }
                 } catch (IOException e) {
                     System.err.println("Error: " + e.getMessage());
@@ -41,7 +45,7 @@ public class Messenger {
             try {
                 var messageLabel = scanner.nextLine();
                 var message = new Message(
-                        "My name",
+                        thisUsersNickname,
                         new Date(System.currentTimeMillis()),
                         messageLabel
                 );

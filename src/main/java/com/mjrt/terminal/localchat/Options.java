@@ -16,6 +16,7 @@ public class Options {
     @Getter
     private final ObjectMapper objectMapper;
     private int port;
+    private String nickname;
 
     private Options() {
         scanner = new Scanner(System.in);
@@ -26,7 +27,9 @@ public class Options {
 
     public void process() {
         printMessageL("To use the chat your devices must have wifi.");
-        printMessageL("Type 1 to be the server (Turn on hotspot).");
+        printMessage("Enter your username/nickname: ");
+        nickname = scanner.nextLine();
+        printMessageL("\nType 1 to be the server (Turn on hotspot).");
         printMessageL("Type 2 to be the client (Turn on wifi).");
         System.out.print(">>> ");
         switch(readInt()) {
@@ -43,6 +46,7 @@ public class Options {
         printMessage("Enter the port to listen: ");
         port = readInt();
         try {
+            server.setThisUsersNickname(nickname);
             server.createConnection(port);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -55,6 +59,7 @@ public class Options {
         printMessage("Enter the listened port: ");
         port = readInt();
         try {
+            client.setThisUsersNickname(nickname);
             client.connect(ipAddress, port);
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
