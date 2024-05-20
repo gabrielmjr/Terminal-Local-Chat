@@ -54,7 +54,7 @@ Just enter an username.
   Enter the choosen port and voilà, they're connected to each other, you're able to send messages, just enter something and it will show you in the other device's terminal.
 
 ## License
-Copyright 2024 Gabriel MJr
+```Copyright 2024 Gabriel MJr```
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
