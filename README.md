@@ -1,6 +1,8 @@
 # Terminal Local Chat
 ***This project is a terminal local chat between two devices where one is hosting (by turning on hotspot) and other is client (by connecting to the turned on hotspot)***.
 
+![Build state](https://github.com/gabrielmjr/terminal-local-chat/actions/workflows/maven.yml/badge.svg)
+
 ### How it works?
 As the name suggests, it works locally between two devices (Later on this number will be increased), where one turns on [hotspot](https://en.wikipedia.org/wiki/Wi-Fi_hotspot#:~:text=A%20hotspot%20is%20a%20physical,to%20an%20Internet%20service%20provider.), other turns on [WI-Fi](https://en.wikipedia.org/wiki/Wi-Fi) and connects to the other's hotspot, both run the [jar file](https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jarGuide.html), follow the instructions, after all, they can send message from terminal for each other.
 
