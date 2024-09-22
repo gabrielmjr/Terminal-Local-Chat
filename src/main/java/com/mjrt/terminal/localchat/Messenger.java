@@ -5,10 +5,14 @@ import com.mjrt.terminal.localchat.model.Message;
 import com.mjrt.terminal.localchat.util.DateFormatter;
 import lombok.Setter;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Scanner;
+
+import static com.mjrt.terminal.localchat.util.ThreadUtils.threadPools;
 
 public class Messenger {
     protected Socket socket;
@@ -23,26 +27,28 @@ public class Messenger {
     }
 
     protected void bindMessageObtainer() {
-            new Thread(() -> {
+        threadPools.execute(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                Message message = null;
                 try {
-                    while (true) {
-                        var message = obtainMessage();
-                        System.out.printf("%s[%s]: %s%n", message.getFrom(), DateFormatter.fullFormat(message.getSentDate()), message.getMessage());
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error: " + e.getMessage());
+                    message = obtainMessage();
+                    System.out.println(message.getFrom() + "[" + DateFormatter.fullFormat(message.getSentDate()) + "]: " + message.getMessage());
+                } catch (Exception e) {
+                    System.err.println("Device disconnected");
+                    System.exit(0);
                 }
-            }).start();
+            }
+        });
     }
 
-    private Message obtainMessage() throws IOException {
+    private Message obtainMessage() throws Exception {
         var dataInputStream = new DataInputStream(socket.getInputStream());
         return objectMapper.readValue(dataInputStream.readUTF(), Message.class);
     }
 
-    protected void bindMessageSender() throws IOException {
-        while (true) {
-            try {
+    protected void bindMessageSender() {
+        try {
+            while (true) {
                 var messageLabel = scanner.nextLine();
                 var message = new Message(
                         thisUsersNickname,
@@ -53,9 +59,9 @@ public class Messenger {
                 dataOutputStream.writeUTF(objectMapper.writeValueAsString(message));
                 dataOutputStream.flush();
                 socket.getOutputStream().flush();
-            } catch (IOException e) {
-                System.err.println("Error: " + e.getMessage());
             }
+        } catch (IOException e) {
+            System.err.println("Error when sending message: " + e.getMessage());
         }
     }
 }

@@ -25,14 +25,20 @@ public class Options {
         objectMapper = new ObjectMapper();
     }
 
+    public static Options getInstance() {
+        if (instance == null)
+            instance = new Options();
+        return instance;
+    }
+
     public void process() {
-        printMessageL("To use the chat your devices must have wifi.");
-        printMessage("Enter your username/nickname: ");
+        System.out.println("To use the chat your devices must have wifi.");
+        System.out.print("Enter your username/nickname: ");
         nickname = scanner.nextLine();
-        printMessageL("\nType 1 to be the server (Turn on hotspot).");
-        printMessageL("Type 2 to be the client (Turn on wifi).");
+        System.out.println("\nType 1 to be the server (Turn on hotspot).");
+        System.out.println("Type 2 to be the client (Turn on wifi).");
         System.out.print(">>> ");
-        switch(readInt()) {
+        switch (readInt()) {
             case 1:
                 startAsServer();
                 break;
@@ -43,7 +49,7 @@ public class Options {
     }
 
     private void startAsServer() {
-        printMessage("Enter the port to listen: ");
+        System.out.print("Enter the port to listen: ");
         port = readInt();
         try {
             server.setThisUsersNickname(nickname);
@@ -54,9 +60,9 @@ public class Options {
     }
 
     private void startAsClient() {
-        printMessage("Enter the ip address: ");
+        System.out.print("Enter the ip address: ");
         String ipAddress = readString();
-        printMessage("Enter the listened port: ");
+        System.out.print("Enter the listened port: ");
         port = readInt();
         try {
             client.setThisUsersNickname(nickname);
@@ -66,25 +72,11 @@ public class Options {
         }
     }
 
-    public static void printMessage(String message) {
-        System.out.print(message);
-    }
-
-    public static  void printMessageL(String message) {
-        System.out.println(message);
-    }
-
     public String readString() {
         return scanner.next();
     }
 
     private int readInt() {
         return scanner.nextInt();
-    }
-
-    public static Options getInstance() {
-        if (instance == null)
-            instance = new Options();
-        return instance;
     }
 }
